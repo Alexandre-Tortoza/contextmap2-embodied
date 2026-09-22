@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict
 
 from contextmap2_embodied.contracts import MissionPlan, NavigateTo, Repeat, ResolveTarget
 from contextmap2_embodied.models import NavigationResult, ResolvedNavigationTarget
-from contextmap2_embodied.ports import ContextMapPort, NavigatorPort
+from contextmap2_embodied.ports import ContextQueryPort, NavigatorPort, TargetGroundingPort
 
 
 class ExecutionError(RuntimeError):
@@ -58,8 +58,15 @@ class MissionExecutionReport(_ExecutionModel):
 class MissionExecutor:
     """Execute a validated mission using deterministic ports."""
 
-    def __init__(self, *, context_map: ContextMapPort, navigator: NavigatorPort) -> None:
-        self._context_map = context_map
+    def __init__(
+        self,
+        *,
+        query: ContextQueryPort,
+        grounding: TargetGroundingPort,
+        navigator: NavigatorPort,
+    ) -> None:
+        self._query = query
+        self._grounding = grounding
         self._navigator = navigator
 
     def execute(self, plan: MissionPlan) -> MissionExecutionReport:
@@ -128,7 +135,7 @@ class MissionExecutor:
         symbols: dict[str, ResolvedNavigationTarget],
         records: list[StepRecord],
     ) -> None:
-        resolution = self._context_map.resolve(step.query)
+        resolution = self._query.resolve(step.query)
         entity_id = resolution.resolved_entity_id
 
         if entity_id is None:
@@ -147,7 +154,7 @@ class MissionExecutor:
             )
             raise TargetResolutionError(detail)
 
-        target = self._context_map.navigation_target(entity_id)
+        target = self._grounding.ground(entity_id)
         symbols[step.name] = target
         records.append(
             StepRecord(
