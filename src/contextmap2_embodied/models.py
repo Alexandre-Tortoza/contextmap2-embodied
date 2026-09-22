@@ -27,7 +27,10 @@ class QueryCandidate(DomainModel):
 
     entity_id: str = Field(min_length=1)
     semantic_labels: tuple[str, ...] = ()
+    semantic_status: str = "not_applicable"
     relation_ids: tuple[str, ...] = ()
+    uncertain: bool = False
+    uncertainty_reasons: tuple[str, ...] = ()
     evidence_refs: tuple[str, ...] = ()
 
 
@@ -40,14 +43,21 @@ class QueryResolution(DomainModel):
 
     @property
     def resolved_entity_id(self) -> str | None:
-        """Return the selected entity only when resolution is unique."""
+        """Return the selected entity only when resolution is unique and certain."""
         if self.status != "resolved" or len(self.candidates) != 1:
             return None
-        return self.candidates[0].entity_id
+        candidate = self.candidates[0]
+        if candidate.uncertain:
+            return None
+        return candidate.entity_id
 
 
 class ResolvedNavigationTarget(DomainModel):
-    """ContextMap entity grounded to one safe navigation pose."""
+    """ContextMap entity grounded to one navigation pose.
+
+    The derivation must state whether collision/free-space checks were applied. Merely deriving a
+    centroid from geometry does not make a pose safe.
+    """
 
     entity_id: str = Field(min_length=1)
     pose: Pose2D
