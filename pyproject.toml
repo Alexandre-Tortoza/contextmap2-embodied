@@ -18,6 +18,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+contextmap = [
+  "contextmap @ git+https://github.com/Alexandre-Tortoza/contextmap2.git@32585fdacaa98a80fcac0fa5af94bd871bdfeae3",
+]
 dev = [
   "mypy>=1.11,<2",
   "pytest>=8.3,<9",
