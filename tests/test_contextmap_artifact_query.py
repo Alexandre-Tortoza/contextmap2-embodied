@@ -17,9 +17,7 @@ def _entity(
     status: str = "unambiguous",
     alternatives: tuple[str, ...] = (),
 ) -> SimpleNamespace:
-    hypotheses = tuple(
-        SimpleNamespace(label=item) for item in (label, *alternatives)
-    )
+    hypotheses = tuple(SimpleNamespace(label=item) for item in (label, *alternatives))
     return SimpleNamespace(
         entity_id=entity_id,
         semantic_state=SimpleNamespace(
@@ -59,9 +57,7 @@ class _Reader:
 
     def metadata(self) -> SimpleNamespace:
         return SimpleNamespace(
-            capabilities=SimpleNamespace(
-                content=(_enum("entities"), _enum("relations"))
-            )
+            capabilities=SimpleNamespace(content=(_enum("entities"), _enum("relations")))
         )
 
     def entities(self):
@@ -81,9 +77,7 @@ def test_resolves_door_next_to_wooden_pallet() -> None:
             _entity("door-2", "door"),
             _entity("pallet-1", "wooden pallet"),
         ),
-        relations=(
-            _relation("rel-1", "door-1", "next_to", "pallet-1"),
-        ),
+        relations=(_relation("rel-1", "door-1", "next_to", "pallet-1"),),
     )
     query = ContextMapArtifactQuery(reader)
 
@@ -162,9 +156,7 @@ def test_ambiguous_semantic_hypothesis_is_not_promoted_to_truth() -> None:
     query = ContextMapArtifactQuery(reader)
 
     result = query.resolve(
-        TargetQuery.model_validate(
-            {"selector": {"kind": "semantic", "label": "door"}}
-        )
+        TargetQuery.model_validate({"selector": {"kind": "semantic", "label": "door"}})
     )
 
     assert result.status == "ambiguous"
@@ -221,14 +213,10 @@ def test_label_matching_is_casefold_exact_without_synonym_expansion() -> None:
     query = ContextMapArtifactQuery(reader)
 
     exact = query.resolve(
-        TargetQuery.model_validate(
-            {"selector": {"kind": "semantic", "label": " wooden pallet "}}
-        )
+        TargetQuery.model_validate({"selector": {"kind": "semantic", "label": " wooden pallet "}})
     )
     synonym = query.resolve(
-        TargetQuery.model_validate(
-            {"selector": {"kind": "semantic", "label": "wood skid"}}
-        )
+        TargetQuery.model_validate({"selector": {"kind": "semantic", "label": "wood skid"}})
     )
 
     assert exact.status == "resolved"
