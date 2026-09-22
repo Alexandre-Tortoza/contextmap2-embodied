@@ -16,7 +16,7 @@ from contextmap2_embodied.models import (
 
 @dataclass
 class InMemoryContextMap:
-    """Fixture-only ContextMap port keyed by semantic label or entity id."""
+    """Fixture-only query and grounding adapter keyed by semantic label or entity id."""
 
     semantic_index: dict[str, tuple[str, ...]]
     targets: dict[str, ResolvedNavigationTarget]
@@ -45,7 +45,7 @@ class InMemoryContextMap:
             detail="fixture query matched multiple entities",
         )
 
-    def navigation_target(self, entity_id: str) -> ResolvedNavigationTarget:
+    def ground(self, entity_id: str) -> ResolvedNavigationTarget:
         """Return the pre-grounded fixture target."""
         return self.targets[entity_id]
 
