@@ -17,9 +17,9 @@ Inside the Distrobox:
 
 ```bash
 cd ~/path/to/contextmap2-embodied
-./scripts/bootstrap-ubuntu.sh
+bash scripts/bootstrap-ubuntu.sh
 source /opt/ros/jazzy/setup.bash
-./scripts/verify-env.sh
+bash scripts/verify-env.sh
 ```
 
 The bootstrap script is intended to be re-runnable. It does not modify the shared host shell startup files.
