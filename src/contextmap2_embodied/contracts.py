@@ -6,9 +6,24 @@ filesystem layout. External adapters translate their native representations into
 
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Annotated, Literal, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+RelationPredicateName: TypeAlias = Literal[
+    "next_to",
+    "above",
+    "below",
+    "in_front_of",
+    "behind",
+    "inside",
+    "contains",
+    "intersects",
+    "touching",
+    "on_top_of",
+    "leaning_against",
+]
+"""Canonical relation names currently exported by ContextMap2's relation taxonomy."""
 
 
 class ContractModel(BaseModel):
@@ -38,9 +53,12 @@ TargetSelector = Annotated[
 
 
 class RelationConstraint(ContractModel):
-    """Require a canonical ContextMap relation to another selected entity."""
+    """Require a canonical ContextMap relation to another selected entity.
 
-    predicate: str = Field(min_length=1)
+    Direction is preserved exactly as ContextMap2 stores it: candidate predicate object.
+    """
+
+    predicate: RelationPredicateName
     object: TargetSelector
 
 
