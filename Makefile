@@ -22,4 +22,4 @@ test:
 check: lint typecheck test
 
 env-verify:
-	./scripts/verify-env.sh
+	bash scripts/verify-env.sh
