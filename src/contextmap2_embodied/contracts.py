@@ -6,11 +6,11 @@ filesystem layout. External adapters translate their native representations into
 
 from __future__ import annotations
 
-from typing import Annotated, Literal, TypeAlias
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-RelationPredicateName: TypeAlias = Literal[
+type RelationPredicateName = Literal[
     "next_to",
     "above",
     "below",
