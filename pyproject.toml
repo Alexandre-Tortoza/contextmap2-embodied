@@ -31,6 +31,9 @@ dev = [
 [project.scripts]
 contextmap2-embodied = "contextmap2_embodied.cli:main"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/contextmap2_embodied"]
 
