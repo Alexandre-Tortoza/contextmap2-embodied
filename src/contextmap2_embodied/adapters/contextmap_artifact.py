@@ -151,18 +151,19 @@ class ContextMapArtifactQuery:
     ) -> Self:
         """Open the artifact through ContextMap2's public ContextMapArtifactReader."""
         try:
-            from contextmap.artifact import ContextMapArtifactReader
+            artifact_module = import_module("contextmap.artifact")
         except ImportError as error:
             raise RuntimeError(
                 "ContextMap2 is not installed; install the 'contextmap' optional dependency"
             ) from error
 
-        reader = ContextMapArtifactReader.open(
+        reader_class = artifact_module.ContextMapArtifactReader
+        reader = reader_class.open(
             path,
             dependency_paths=dependency_paths,
             verify_hashes=verify_hashes,
         )
-        return cls(reader, owns_reader=True)
+        return cls(cast(ArtifactReaderLike, reader), owns_reader=True)
 
     def __enter__(self) -> Self:
         return self
