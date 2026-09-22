@@ -1,0 +1,109 @@
+name: Bootstrap project milestones
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/bootstrap-milestones.yml
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  bootstrap:
+    name: Create milestones and assign implementation issues
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create or update milestones and assign issues
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+
+            const definitions = [
+              {
+                title: "M0 - Reproducible foundation",
+                description: "Reproducible Ubuntu 24.04 Distrobox, ROS 2 Jazzy, Gazebo Harmonic, Nav2, repository tooling, and pinned dependency matrix.",
+                issues: [1, 2, 3],
+              },
+              {
+                title: "M1 - Gazebo and Nav2 deterministic baseline",
+                description: "Known-good differential-drive simulation, controlled semantic world, deterministic reset, and measurable Nav2 execution.",
+                issues: [4, 5, 6],
+              },
+              {
+                title: "M2 - ContextMap artifact grounding",
+                description: "Consume the real ContextMapArtifact, validate capabilities and uncertainty, query entities/relations, resolve geometry, and align frames for Nav2.",
+                issues: [7, 8, 9, 10, 11],
+              },
+              {
+                title: "M3 - Typed deterministic mission execution",
+                description: "Versioned MissionPlan, deterministic Nav2 executor, sequence/repeat semantics, audit log, and replay without an LLM.",
+                issues: [12, 13, 14],
+              },
+              {
+                title: "M4 - Natural-language embodied agent",
+                description: "RAI-based natural-language interaction, typed ContextMap tools, MissionPlan compilation, preflight, and end-to-end Gazebo acceptance missions.",
+                issues: [15, 16, 17, 18],
+              },
+              {
+                title: "M5 - Evaluation and final product acceptance",
+                description: "Quantitative benchmark, headless regression, clean-room setup, documentation, and final reproducible product acceptance.",
+                issues: [19, 20, 21],
+              },
+            ];
+
+            const allMilestones = await github.paginate(
+              github.rest.issues.listMilestones,
+              { owner, repo, state: "all", per_page: 100 },
+            );
+
+            const byTitle = new Map(allMilestones.map(m => [m.title, m]));
+
+            for (const definition of definitions) {
+              let milestone = byTitle.get(definition.title);
+
+              if (!milestone) {
+                const created = await github.rest.issues.createMilestone({
+                  owner,
+                  repo,
+                  title: definition.title,
+                  description: definition.description,
+                  state: "open",
+                });
+                milestone = created.data;
+                core.info(`Created milestone #${milestone.number}: ${milestone.title}`);
+              } else {
+                await github.rest.issues.updateMilestone({
+                  owner,
+                  repo,
+                  milestone_number: milestone.number,
+                  title: definition.title,
+                  description: definition.description,
+                  state: "open",
+                });
+                core.info(`Updated milestone #${milestone.number}: ${milestone.title}`);
+              }
+
+              for (const issueNumber of definition.issues) {
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  milestone: milestone.number,
+                });
+                core.info(`Assigned issue #${issueNumber} to ${definition.title}`);
+              }
+            }
+
+            core.summary
+              .addHeading("ContextMap2 Embodied milestones")
+              .addTable([
+                [{ data: "Milestone", header: true }, { data: "Issues", header: true }],
+                ...definitions.map(item => [item.title, item.issues.map(n => `#${n}`).join(", ")]),
+              ])
+              .write();
