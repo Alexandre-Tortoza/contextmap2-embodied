@@ -31,17 +31,13 @@ def test_executor_runs_resolve_navigate_sequence() -> None:
                 {
                     "kind": "resolve_target",
                     "name": "x",
-                    "query": {
-                        "selector": {"kind": "semantic", "label": "corridor X"}
-                    },
+                    "query": {"selector": {"kind": "semantic", "label": "corridor X"}},
                 },
                 {"kind": "navigate_to", "target": "x"},
                 {
                     "kind": "resolve_target",
                     "name": "door",
-                    "query": {
-                        "selector": {"kind": "semantic", "label": "door"}
-                    },
+                    "query": {"selector": {"kind": "semantic", "label": "door"}},
                 },
                 {"kind": "navigate_to", "target": "door"},
                 {"kind": "navigate_to", "target": "x"},
@@ -73,16 +69,12 @@ def test_executor_repeat_runs_exact_number_of_cycles() -> None:
                 {
                     "kind": "resolve_target",
                     "name": "a",
-                    "query": {
-                        "selector": {"kind": "semantic", "label": "corridor A"}
-                    },
+                    "query": {"selector": {"kind": "semantic", "label": "corridor A"}},
                 },
                 {
                     "kind": "resolve_target",
                     "name": "b",
-                    "query": {
-                        "selector": {"kind": "semantic", "label": "corridor B"}
-                    },
+                    "query": {"selector": {"kind": "semantic", "label": "corridor B"}},
                 },
                 {
                     "kind": "repeat",
