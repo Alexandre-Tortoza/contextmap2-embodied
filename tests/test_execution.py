@@ -23,7 +23,7 @@ def test_executor_runs_resolve_navigate_sequence() -> None:
         },
     )
     navigator = RecordingNavigator()
-    executor = MissionExecutor(context_map=context_map, navigator=navigator)
+    executor = MissionExecutor(query=context_map, grounding=context_map, navigator=navigator)
 
     plan = MissionPlan.model_validate(
         {
