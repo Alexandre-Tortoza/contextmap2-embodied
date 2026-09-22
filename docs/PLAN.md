@@ -132,6 +132,19 @@ Create reproducible scenarios and quantitative reports covering grounding, graph
 
 Exit criterion: the documented end-to-end acceptance scenarios pass from clean environment setup through Gazebo execution.
 
+## Delivery issue map
+
+The GitHub backlog is organized in dependency order:
+
+- M0 tracker #22: #1, #2, #3
+- M1 tracker #23: #4, #5, #6
+- M2 tracker #24: #7, #8, #9, #10, #11
+- M3 tracker #25: #12, #13, #14
+- M4 tracker #26: #15, #16, #17, #18
+- M5 tracker #27: #19, #20, #21
+
+Recommended implementation order is the numeric issue order inside each milestone. Parallel work is acceptable only when issue inputs are already stable.
+
 ## Acceptance metrics
 
 At minimum record:
