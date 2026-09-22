@@ -12,21 +12,25 @@ from contextmap2_embodied.models import (
 )
 
 
-class ContextMapPort(Protocol):
-    """Read/query boundary for one loaded ContextMap artifact."""
+class ContextQueryPort(Protocol):
+    """Semantic/graph query boundary for one loaded ContextMap artifact."""
 
     def resolve(self, query: TargetQuery) -> QueryResolution:
         """Resolve a typed query without inventing missing semantics."""
 
-    def navigation_target(self, entity_id: str) -> ResolvedNavigationTarget:
-        """Ground a resolved entity to a safe navigation target."""
+
+class TargetGroundingPort(Protocol):
+    """Boundary that converts one resolved entity into a navigation target."""
+
+    def ground(self, entity_id: str) -> ResolvedNavigationTarget:
+        """Ground an entity to a navigation pose with an explicit derivation."""
 
 
 class NavigatorPort(Protocol):
     """High-level navigation boundary.
 
-    Implementations may wrap Nav2, a simulator fake, or another deterministic
-    navigation stack. The port deliberately contains no velocity command API.
+    Implementations may wrap Nav2, a simulator fake, or another deterministic navigation stack.
+    The port deliberately contains no velocity command API.
     """
 
     def navigate_to(self, target: ResolvedNavigationTarget) -> NavigationResult:
